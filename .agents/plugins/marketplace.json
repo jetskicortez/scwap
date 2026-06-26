@@ -1,0 +1,26 @@
+{
+  "name": "scwap",
+  "interface": {
+    "displayName": "Super Caveman with a Ponytail",
+    "shortDescription": "Process + build restraint + terse prose, fused",
+    "longDescription": "One install that composes Superpowers process discipline, Ponytail build restraint, and Caveman terse prose for Codex.",
+    "developerName": "Jesse Cortez",
+    "category": "Productivity",
+    "websiteURL": "https://github.com/jetskicortez/scwap"
+  },
+  "plugins": [
+    {
+      "name": "scwap",
+      "description": "Process + build-restraint + terse-prose layers in one install.",
+      "source": {
+        "source": "local",
+        "path": "./plugins/scwap"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

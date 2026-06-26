@@ -4,6 +4,6 @@
   "description": "Super Caveman with a Ponytail — superpowers + ponytail + caveman, fused.",
   "owner": { "name": "Jesse Cortez", "url": "https://github.com/jetskicortez" },
   "plugins": [
-    { "name": "scwap", "description": "Process + build-restraint + terse-prose layers in one install.", "source": "./", "category": "productivity" }
+    { "name": "scwap", "description": "Process + build-restraint + terse-prose layers in one install.", "source": "./plugins/scwap", "category": "productivity" }
   ]
 }

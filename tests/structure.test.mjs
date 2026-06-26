@@ -22,6 +22,46 @@ test('marketplace.json valid + lists scwap plugin', () => {
   assert.ok(m.plugins.some((x) => x.name === 'scwap'));
 });
 
+test('Codex marketplace metadata exposes nested scwap plugin', () => {
+  const m = json('.agents/plugins/marketplace.json');
+  assert.equal(m.name, 'scwap');
+  assert.equal(m.interface.displayName, 'Super Caveman with a Ponytail');
+
+  const plugin = m.plugins.find((x) => x.name === 'scwap');
+  assert.ok(plugin, 'missing scwap marketplace plugin');
+  assert.deepEqual(plugin.source, { source: 'local', path: './plugins/scwap' });
+  assert.equal(plugin.policy.installation, 'AVAILABLE');
+  assert.equal(plugin.policy.authentication, 'ON_INSTALL');
+});
+
+test('Claude marketplace points at nested plugin root', () => {
+  const m = json('.claude-plugin/marketplace.json');
+  const plugin = m.plugins.find((x) => x.name === 'scwap');
+  assert.ok(plugin, 'missing scwap marketplace plugin');
+  assert.equal(plugin.source, './plugins/scwap');
+  assert.ok(existsSync(root + 'plugins/scwap/.claude-plugin/plugin.json'));
+});
+
+test('nested Codex plugin manifest and runtime payload resolve', () => {
+  const p = json('plugins/scwap/.codex-plugin/plugin.json');
+  assert.equal(p.name, 'scwap');
+  assert.equal(p.hooks, './hooks/scwap-codex-hooks.json');
+  assert.equal(p.skills, './skills/');
+
+  for (const f of [
+    'plugins/scwap/hooks/scwap-codex-hooks.json',
+    'plugins/scwap/hooks/ponytail-activate.js',
+    'plugins/scwap/hooks/run-hook.cmd',
+    'plugins/scwap/hooks/session-start-codex',
+    'plugins/scwap/skills/ponytail/SKILL.md',
+    'plugins/scwap/skills/caveman/SKILL.md',
+    'plugins/scwap/skills/using-superpowers/SKILL.md',
+    'plugins/scwap/rules/scwap-flow.md',
+  ]) {
+    assert.ok(existsSync(root + f), 'missing nested payload ' + f);
+  }
+});
+
 test('LICENSE present', () => {
   assert.ok(existsSync(root + 'LICENSE'));
 });
@@ -104,6 +144,30 @@ test('plugin.json hooks path resolves to an existing file', () => {
   assert.ok(existsSync(root + p.hooks.replace(/^\.\//, '')), 'plugin.json hooks path does not resolve: ' + p.hooks);
 });
 
+test('Codex plugin manifest uses merged scwap hook file', () => {
+  const p = json('.codex-plugin/plugin.json');
+  assert.equal(p.name, 'scwap');
+  assert.equal(p.hooks, './hooks/scwap-codex-hooks.json');
+  assert.ok(existsSync(root + p.hooks.replace(/^\.\//, '')), 'Codex hooks path does not resolve: ' + p.hooks);
+  assert.doesNotMatch(p.interface.longDescription, /AGENTS\.md delivers the full three-layer ruleset/);
+});
+
+test('Codex SessionStart hook activates all three scwap layers', () => {
+  const h = json('hooks/scwap-codex-hooks.json');
+  const sessionStart = h.hooks.SessionStart;
+  assert.equal(sessionStart.length, 1);
+  assert.match(sessionStart[0].matcher, /startup/);
+  assert.match(sessionStart[0].matcher, /resume/);
+  assert.match(sessionStart[0].matcher, /clear/);
+  assert.match(sessionStart[0].matcher, /compact/);
+
+  const commands = sessionStart[0].hooks.map((x) => x.command).join('\n');
+  assert.match(commands, /ponytail-activate\.js/);
+  assert.match(commands, /CAVEMAN MODE ACTIVE/);
+  assert.match(commands, /session-start-codex/);
+  assert.doesNotMatch(commands, /AGENTS\.md/);
+});
+
 test('scwap-flow rule + skill present with frontmatter', () => {
   assert.ok(existsSync(root + 'rules/scwap-flow.md'));
   const skill = read('skills/scwap-flow/SKILL.md');
@@ -115,6 +179,9 @@ test('scwap-flow rule + skill present with frontmatter', () => {
 test('README + notices cover install and all three upstreams', () => {
   const r = read('README.md');
   assert.match(r, /plugin marketplace add/);
+  assert.match(r, /codex plugin marketplace add jetskicortez\/scwap/);
+  assert.match(r, /Claude Code/);
+  assert.match(r, /Codex/);
   const n = read('THIRD_PARTY_NOTICES.md');
   for (const repo of ['JuliusBrussee/caveman', 'DietrichGebert/ponytail', 'obra/superpowers']) {
     assert.ok(n.includes(repo), 'notices missing ' + repo);

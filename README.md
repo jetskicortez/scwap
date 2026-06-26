@@ -30,6 +30,8 @@ The `/scwap-flow` skill documents how the layers compose and which one leads. `r
 
 ## Install
 
+### Claude Code
+
 Send these as two separate prompts, then restart Claude Code so hooks load:
 
 ```
@@ -38,6 +40,16 @@ Send these as two separate prompts, then restart Claude Code so hooks load:
 ```
 
 After restart, the status badge appears and all three layers are active at their default levels.
+
+### Codex
+
+Add the marketplace, install/enable `scwap@scwap` from Codex's plugin UI, review/trust the plugin hooks when Codex prompts, then start a new Codex session:
+
+```
+codex plugin marketplace add jetskicortez/scwap
+```
+
+Codex loads all three layers from plugin hooks. No global `~/.codex/AGENTS.md` block is required. Codex hook trust is explicit by design; if hooks are not trusted yet, run `/hooks` in Codex and approve the current scwap hook definitions.
 
 ---
 
