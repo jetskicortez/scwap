@@ -1,0 +1,26 @@
+{
+  "name": "scwap",
+  "version": "0.2.0",
+  "description": "Super Caveman with a Ponytail — process (Superpowers) + build restraint (Ponytail) + terse prose (Caveman), one install, three composable layers.",
+  "author": { "name": "Jesse Cortez" },
+  "homepage": "https://github.com/jetskicortez/scwap",
+  "repository": "https://github.com/jetskicortez/scwap",
+  "license": "MIT",
+  "keywords": ["yagni", "minimalism", "process", "tdd", "terse", "productivity"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks-codex.json",
+  "interface": {
+    "displayName": "Super Caveman with a Ponytail",
+    "shortDescription": "Process + build restraint + terse prose, fused",
+    "longDescription": "Superpowers process discipline (plan/TDD/verify/review), Ponytail build restraint (YAGNI, smallest correct diff), and Caveman terse prose. The repo's AGENTS.md delivers the full three-layer ruleset as always-on Codex instructions; the Claude plugin adds live mode toggles + statusline.",
+    "developerName": "Jesse Cortez",
+    "category": "Productivity",
+    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "websiteURL": "https://github.com/jetskicortez/scwap",
+    "defaultPrompt": [
+      "Use scwap mode for this task.",
+      "Build the smallest correct implementation.",
+      "Review this diff for over-engineering."
+    ]
+  }
+}
