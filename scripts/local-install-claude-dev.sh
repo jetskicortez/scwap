@@ -31,6 +31,7 @@ set -euo pipefail
 # REPO = directory containing this script's parent (repo root)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$SCRIPT_DIR/.." && pwd)"
+PLUGIN_ROOT="$REPO/plugins/scwap"
 
 PLUG="$HOME/.claude/plugins"
 
@@ -41,9 +42,15 @@ SHA_FULL="$(git -C "$REPO" rev-parse HEAD)"
 
 echo "==> scwap local-install"
 echo "    repo  : $REPO"
+echo "    plugin: $PLUGIN_ROOT"
 echo "    SHA   : $SHA  (full: ${SHA_FULL:0:16}...)"
 echo "    target: $PLUG"
 echo ""
+
+if [[ ! -f "$PLUGIN_ROOT/.claude-plugin/plugin.json" ]]; then
+  echo "ERROR: missing plugin manifest at $PLUGIN_ROOT/.claude-plugin/plugin.json" >&2
+  exit 1
+fi
 
 # ---------------------------------------------------------------------------
 # 1. Marketplace clone: $PLUG/marketplaces/scwap
@@ -69,6 +76,7 @@ echo ""
 # 2. Cache entry: $PLUG/cache/scwap/scwap/$SHA/
 #    Layout mirrors existing entries (e.g. ponytail/ponytail/<sha>/).
 #    Structure: <marketplace-name>/<plugin-name>/<version>/
+#    The cache contains the installable plugin payload, not the repo root.
 # ---------------------------------------------------------------------------
 
 CACHE="$PLUG/cache/scwap/scwap/$SHA"
@@ -78,9 +86,9 @@ if [[ -d "$CACHE" ]]; then
   rm -rf "$CACHE"
 fi
 
-echo "--> Copying repo payload to cache dir..."
+echo "--> Copying plugin payload to cache dir..."
 mkdir -p "$CACHE"
-tar -C "$REPO" --exclude='.git' -cf - . | tar -C "$CACHE" -xf -
+tar -C "$PLUGIN_ROOT" --exclude='.git' -cf - . | tar -C "$CACHE" -xf -
 
 echo "--> Touching .in_use marker..."
 touch "$CACHE/.in_use"
