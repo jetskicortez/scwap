@@ -1,0 +1,9 @@
+{
+  "name": "scwap",
+  "version": "0.1.0",
+  "description": "Super Caveman with a Ponytail — one plugin, three composable layers: process (Superpowers), build restraint (Ponytail), terse prose (Caveman).",
+  "author": { "name": "Jesse Cortez" },
+  "homepage": "https://github.com/jetskicortez/scwap",
+  "license": "MIT",
+  "hooks": "./hooks/scwap-hooks.json"
+}
