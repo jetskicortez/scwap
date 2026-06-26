@@ -51,6 +51,13 @@ codex plugin marketplace add jetskicortez/scwap
 
 Codex loads all three layers from plugin hooks. No global `~/.codex/AGENTS.md` block is required. Codex hook trust is explicit by design; if hooks are not trusted yet, run `/hooks` in Codex and approve the current scwap hook definitions.
 
+Windows Codex CLI 0.125 note: if Git fails while cloning a `\\?\...` temp path, clone the repo yourself and add that local path instead:
+
+```
+git clone https://github.com/jetskicortez/scwap.git scwap
+codex plugin marketplace add ./scwap
+```
+
 ---
 
 ## Toggles
