@@ -4,6 +4,18 @@ One plugin, three composable layers: structured process, build restraint, and di
 
 ---
 
+## Support
+
+| Host | Status | Notes |
+|---|---|---|
+| Claude Code | Supported | Installs through Claude Code's plugin marketplace flow. Hooks provide startup context, `/ponytail` and `/caveman` toggles, and optional statusline support. |
+| Codex | Supported | Installs through Codex's plugin marketplace flow. Skills load as `scwap:*`; hooks require explicit Codex trust before startup context runs. |
+| Gemini / Copilot | Not shipped | Deferred until those harnesses have verified plugin or instruction-loading paths. |
+
+`README.md` is the public launch source of truth. Files under `docs/archive/` are historical implementation notes and may describe superseded layouts.
+
+---
+
 ## The Three Layers
 
 | Layer | Source | Controls |
@@ -22,7 +34,7 @@ Each layer is independently togglable. Together they enforce a complete discipli
 brainstorm / plan  →  build the minimum  →  prove correct (TDD / verify / review)
 ```
 
-Mapped to skills: `/superpowers:brainstorming` + `/superpowers:writing-plans` → build → `/superpowers:test-driven-development` + `/superpowers:verification-before-completion` + `/superpowers:requesting-code-review`.
+Mapped to bundled skills: `brainstorming` + `writing-plans` → build → `test-driven-development` + `verification-before-completion` + `requesting-code-review`. In Codex, those appear with the plugin prefix, e.g. `scwap:brainstorming`.
 
 The `/scwap-flow` skill documents how the layers compose and which one leads. `rules/scwap-flow.md` is a portable rule you can drop into a project's instructions (e.g. `CLAUDE.md`) to make the sequence explicit for that project.
 
@@ -57,6 +69,10 @@ Windows Codex CLI 0.125 note: if Git fails while cloning a `\\?\...` temp path, 
 git clone https://github.com/jetskicortez/scwap.git scwap
 codex plugin marketplace add ./scwap
 ```
+
+## Maintainer Notes
+
+`scripts/local-install-claude-dev.sh` is maintainer-only registry replication tooling for Claude Code smoke tests. Public users should use the install commands above.
 
 ---
 

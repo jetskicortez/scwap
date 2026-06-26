@@ -187,3 +187,35 @@ test('README + notices cover install and all three upstreams', () => {
     assert.ok(n.includes(repo), 'notices missing ' + repo);
   }
 });
+
+test('launch docs distinguish supported hosts from deferred hosts', () => {
+  const r = read('README.md');
+  assert.match(r, /Claude Code\s*\|\s*Supported/);
+  assert.match(r, /Codex\s*\|\s*Supported/);
+  assert.match(r, /Gemini \/ Copilot\s*\|\s*Not shipped/);
+  assert.match(r, /hooks require explicit Codex trust/);
+  assert.match(r, /local-install-claude-dev\.sh/);
+  assert.doesNotMatch(r, /local-install\.sh/);
+});
+
+test('historical docs are archived and marked superseded', () => {
+  for (const f of [
+    'docs/archive/2026-06-25-scwap-design.md',
+    'docs/archive/2026-06-25-scwap-implementation-plan.md',
+  ]) {
+    const doc = read(f);
+    assert.match(doc, /Historical note:/, f + ' missing historical note');
+    assert.match(doc, /README\.md.*launch source of truth/, f + ' missing launch source note');
+  }
+
+  assert.ok(!existsSync(root + 'docs/specs/2026-06-25-scwap-design.md'));
+  assert.ok(!existsSync(root + 'docs/plans/2026-06-25-scwap.md'));
+});
+
+test('Claude registry replication script is maintainer-only', () => {
+  assert.ok(existsSync(root + 'scripts/local-install-claude-dev.sh'));
+  assert.ok(!existsSync(root + 'scripts/local-install.sh'));
+  const s = read('scripts/local-install-claude-dev.sh');
+  assert.match(s, /Maintainer-only Claude Code registry smoke test/);
+  assert.match(s, /Public users should/);
+});
