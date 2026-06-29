@@ -1,6 +1,6 @@
 {
   "name": "scwap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Super Caveman with a Ponytail — process (Superpowers) + build restraint (Ponytail) + terse prose (Caveman), one install, three composable layers.",
   "author": { "name": "Jesse Cortez" },
   "homepage": "https://github.com/jetskicortez/scwap",

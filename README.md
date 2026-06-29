@@ -9,7 +9,7 @@ One plugin, three composable layers: structured process, build restraint, and di
 | Host | Status | Notes |
 |---|---|---|
 | Claude Code | Supported | Installs through Claude Code's plugin marketplace flow. Hooks provide startup context, `/ponytail` and `/caveman` toggles, and optional statusline support. |
-| Codex | Supported | Installs through Codex's plugin marketplace flow. Skills load as `scwap:*`; hooks require explicit Codex trust before startup context runs. |
+| Codex | Supported | Installs through Codex's plugin marketplace flow. Skills load as `scwap:*`; hooks require explicit Codex trust before startup context runs. Windows hooks use `commandWindows` overrides. |
 | Gemini / Copilot | Not shipped | Deferred until those harnesses have verified plugin or instruction-loading paths. |
 
 `README.md` is the public launch source of truth. Files under `docs/archive/` are historical implementation notes and may describe superseded layouts.
@@ -61,7 +61,9 @@ Add the marketplace, install/enable `scwap@scwap` from Codex's plugin UI, review
 codex plugin marketplace add jetskicortez/scwap
 ```
 
-Codex loads all three layers from plugin hooks. No global `~/.codex/AGENTS.md` block is required. Codex hook trust is explicit by design; if hooks are not trusted yet, run `/hooks` in Codex and approve the current scwap hook definitions.
+Codex loads all three layers from plugin hooks. No global `~/.codex/AGENTS.md` block is required. Codex hook trust is explicit by design; if hooks are not trusted yet, run `/hooks` in a Codex build that exposes hook review and approve the current scwap hook definitions.
+
+For Windows, the plugin ships `commandWindows` hook entries that use PowerShell `$env:PLUGIN_ROOT` paths. Do not replace them with Unix-style `${PLUGIN_ROOT}` commands; those resolve incorrectly under PowerShell.
 
 Windows Codex CLI 0.125 note: if Git fails while cloning a `\\?\...` temp path, clone the repo yourself and add that local path instead:
 

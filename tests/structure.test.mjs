@@ -168,6 +168,23 @@ test('Codex SessionStart hook activates all three scwap layers', () => {
   assert.doesNotMatch(commands, /AGENTS\.md/);
 });
 
+test('Codex SessionStart hook has Windows-safe command overrides', () => {
+  for (const hookFile of [
+    'hooks/scwap-codex-hooks.json',
+    'plugins/scwap/hooks/scwap-codex-hooks.json',
+  ]) {
+    const h = json(hookFile);
+    const hooks = h.hooks.SessionStart[0].hooks;
+
+    for (const hook of hooks) {
+      if (!hook.command.includes('${PLUGIN_ROOT}')) continue;
+      assert.ok(hook.commandWindows, hookFile + ' missing commandWindows for ' + hook.command);
+      assert.match(hook.commandWindows, /\$env:PLUGIN_ROOT/, hookFile + ' commandWindows must use PowerShell env syntax');
+      assert.doesNotMatch(hook.commandWindows, /\$\{PLUGIN_ROOT\}/, hookFile + ' commandWindows must not use Unix shell syntax');
+    }
+  }
+});
+
 test('scwap-flow rule + skill present with frontmatter', () => {
   assert.ok(existsSync(root + 'rules/scwap-flow.md'));
   const skill = read('skills/scwap-flow/SKILL.md');
