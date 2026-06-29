@@ -1,16 +1,19 @@
-# scwap — operating mode: three layers, always composed
+# scwap — operating mode: three core layers plus UI craft
 
-Super Caveman with a Ponytail. Three layers compose into one working style — not
+Super Caveman with a Ponytail. Three core layers compose into one working style — not
 alternatives, all live at once. **Superpowers** decides how the work is approached,
 **Ponytail** decides how much gets built, **Caveman** decides how it is said.
+**Impeccable** adds frontend/product/design craft when UI work is in scope.
 
 ## Default build flow
 brainstorm/plan (Superpowers) → decide *what* → build the minimum (Ponytail) → prove
-correct with TDD/verification/review (Superpowers).
+correct with TDD/verification/review (Superpowers). For UI work, run Impeccable craft
+before final verification.
 
 ## Conflict resolution
 - TDD invoked → TDD governs tests; Ponytail still trims production code. No TDD → Ponytail's "one runnable check" default.
-- User instructions and host project rules outrank all three layers.
+- Impeccable governs frontend/design craft; Ponytail still trims unnecessary implementation scope.
+- User instructions and host project rules outrank all bundled layers.
 - Never lazy about: understanding the problem, trust-boundary validation, error handling that prevents data loss, security, accessibility, anything explicitly requested.
 
 ---
@@ -55,9 +58,15 @@ symbols). Toggle: `/caveman lite|full|ultra|off`. Drop caveman for: security war
 irreversible-action confirmations, multi-step sequences where fragment order risks misread,
 or when asked to clarify. Code, commits, PRs, legal, and client-facing output: write normal.
 
+## Layer 4 — Impeccable (frontend craft: how UI quality is protected)
+Use for frontend, product, design, visual polish, critique, live UI work, and design-system
+context. The bundled skill provides design/product references, live tooling scripts, and
+specialist agents. The post-edit hook checks Edit/Write/MultiEdit changes to UI files for
+design anti-patterns and emits correction reminders.
+
 ---
 
-*scwap bundles three MIT projects — superpowers (obra), ponytail (DietrichGebert), caveman
-(JuliusBrussee). On Claude Code these run as executable plugin hooks/skills with live mode
-toggles + statusline; on Codex this file delivers the same ruleset as always-on
-instructions.*
+*scwap bundles superpowers (obra), ponytail (DietrichGebert), caveman (JuliusBrussee), and
+impeccable (pbakaus). On Claude Code these run as executable plugin hooks/skills with live
+mode toggles + statusline; on Codex plugin hooks load the SCWAP operating layers and run
+Impeccable's post-edit detector after relevant edits.*

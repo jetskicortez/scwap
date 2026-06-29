@@ -14,6 +14,8 @@ test('plugin.json valid + required fields', () => {
   assert.equal(p.name, 'scwap');
   assert.match(p.version, /^\d+\.\d+\.\d+$/);
   assert.equal(p.hooks, './hooks/scwap-hooks.json');
+  assert.equal(p.skills, './skills/');
+  assert.deepEqual(p.agents, ['./agents/impeccable-manual-edit-applier.md']);
 });
 
 test('marketplace.json valid + lists scwap plugin', () => {
@@ -50,12 +52,17 @@ test('nested Codex plugin manifest and runtime payload resolve', () => {
 
   for (const f of [
     'plugins/scwap/hooks/scwap-codex-hooks.json',
+    'plugins/scwap/hooks/hooks-codex.json',
     'plugins/scwap/hooks/ponytail-activate.js',
     'plugins/scwap/hooks/run-hook.cmd',
     'plugins/scwap/hooks/session-start-codex',
     'plugins/scwap/skills/ponytail/SKILL.md',
     'plugins/scwap/skills/caveman/SKILL.md',
     'plugins/scwap/skills/using-superpowers/SKILL.md',
+    'plugins/scwap/skills/impeccable/SKILL.md',
+    'plugins/scwap/skills/impeccable/scripts/hook.mjs',
+    'plugins/scwap/agents/impeccable-manual-edit-applier.md',
+    'plugins/scwap/agents/impeccable-asset-producer.md',
     'plugins/scwap/rules/scwap-flow.md',
   ]) {
     assert.ok(existsSync(root + f), 'missing nested payload ' + f);
@@ -121,6 +128,40 @@ test('superpowers license vendored', () => {
   assert.ok(existsSync(root + 'licenses/LICENSE-superpowers'));
 });
 
+test('impeccable runtime vendored', () => {
+  for (const base of ['', 'plugins/scwap/']) {
+    for (const f of [
+      'skills/impeccable/SKILL.md',
+      'skills/impeccable/reference/brand.md',
+      'skills/impeccable/reference/codex.md',
+      'skills/impeccable/reference/hooks.md',
+      'skills/impeccable/reference/live.md',
+      'skills/impeccable/reference/product.md',
+      'skills/impeccable/scripts/hook.mjs',
+      'skills/impeccable/scripts/hook-lib.mjs',
+      'skills/impeccable/scripts/detect.mjs',
+      'skills/impeccable/scripts/live-server.mjs',
+      'skills/impeccable/scripts/detector/detect-antipatterns.mjs',
+      'skills/impeccable/scripts/detector/cli/main.mjs',
+      'agents/impeccable-manual-edit-applier.md',
+      'agents/impeccable-asset-producer.md',
+      'licenses/LICENSE-impeccable',
+    ]) {
+      assert.ok(existsSync(root + base + f), 'missing ' + base + f);
+    }
+  }
+});
+
+test('impeccable agent frontmatter preserved for host discovery', () => {
+  for (const base of ['', 'plugins/scwap/']) {
+    const manual = read(base + 'agents/impeccable-manual-edit-applier.md');
+    const asset = read(base + 'agents/impeccable-asset-producer.md');
+    assert.match(manual, /codex-name:\s*impeccable_manual_edit_applier/);
+    assert.match(asset, /codex-name:\s*impeccable_asset_producer/);
+    assert.match(asset, /providers:\s*codex/);
+  }
+});
+
 test('scwap-hooks.json valid; every referenced script exists', () => {
   const h = json('hooks/scwap-hooks.json');
   const events = Object.values(h.hooks).flat();
@@ -128,10 +169,13 @@ test('scwap-hooks.json valid; every referenced script exists', () => {
   for (const c of cmds) {
     const m = c.match(/hooks\/([A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)?)/);
     if (m) assert.ok(existsSync(root + 'hooks/' + m[1]), 'missing referenced ' + m[1]);
+    const skill = c.match(/skills\/([A-Za-z0-9._/-]+)/);
+    if (skill) assert.ok(existsSync(root + 'skills/' + skill[1]), 'missing referenced skill file ' + skill[1]);
   }
   assert.ok(h.hooks.SessionStart.length >= 1);
   assert.ok(h.hooks.UserPromptSubmit.length >= 1);
   assert.ok(h.hooks.SubagentStart.length >= 1);
+  assert.ok(h.hooks.PostToolUse.length >= 1);
 });
 
 test('statusline scripts present', () => {
@@ -168,13 +212,15 @@ test('Codex SessionStart hook activates all three scwap layers', () => {
   assert.doesNotMatch(commands, /AGENTS\.md/);
 });
 
-test('Codex SessionStart hook has Windows-safe command overrides', () => {
+test('Codex plugin hook commands have Windows-safe command overrides', () => {
   for (const hookFile of [
     'hooks/scwap-codex-hooks.json',
+    'hooks/hooks-codex.json',
     'plugins/scwap/hooks/scwap-codex-hooks.json',
+    'plugins/scwap/hooks/hooks-codex.json',
   ]) {
     const h = json(hookFile);
-    const hooks = h.hooks.SessionStart[0].hooks;
+    const hooks = Object.values(h.hooks).flat().flatMap((event) => event.hooks);
 
     for (const hook of hooks) {
       if (!hook.command.includes('${PLUGIN_ROOT}')) continue;
@@ -182,6 +228,24 @@ test('Codex SessionStart hook has Windows-safe command overrides', () => {
       assert.match(hook.commandWindows, /\$env:PLUGIN_ROOT/, hookFile + ' commandWindows must use PowerShell env syntax');
       assert.doesNotMatch(hook.commandWindows, /\$\{PLUGIN_ROOT\}/, hookFile + ' commandWindows must not use Unix shell syntax');
     }
+  }
+});
+
+test('Codex PostToolUse hook runs impeccable detector from plugin root', () => {
+  for (const hookFile of [
+    'hooks/scwap-codex-hooks.json',
+    'hooks/hooks-codex.json',
+    'plugins/scwap/hooks/scwap-codex-hooks.json',
+    'plugins/scwap/hooks/hooks-codex.json',
+  ]) {
+    const h = json(hookFile);
+    const postToolUse = h.hooks.PostToolUse;
+    assert.ok(postToolUse, hookFile + ' missing PostToolUse hooks');
+    const detectorEvent = postToolUse.find((x) => /Edit\|Write\|MultiEdit/.test(x.matcher || ''));
+    assert.ok(detectorEvent, hookFile + ' missing Impeccable edit matcher');
+    const commands = detectorEvent.hooks.map((x) => x.command).join('\n');
+    assert.match(commands, /skills\/impeccable\/scripts\/hook\.mjs/);
+    assert.doesNotMatch(commands, /\.codex\/hooks\.json/);
   }
 });
 
@@ -193,16 +257,18 @@ test('scwap-flow rule + skill present with frontmatter', () => {
   assert.match(skill, /description:\s*\S/);
 });
 
-test('README + notices cover install and all three upstreams', () => {
+test('README + notices cover install and all bundled upstreams', () => {
   const r = read('README.md');
   assert.match(r, /plugin marketplace add/);
   assert.match(r, /codex plugin marketplace add jetskicortez\/scwap/);
   assert.match(r, /Claude Code/);
   assert.match(r, /Codex/);
+  assert.match(r, /Impeccable/);
   const n = read('THIRD_PARTY_NOTICES.md');
-  for (const repo of ['JuliusBrussee/caveman', 'DietrichGebert/ponytail', 'obra/superpowers']) {
+  for (const repo of ['JuliusBrussee/caveman', 'DietrichGebert/ponytail', 'obra/superpowers', 'pbakaus/impeccable']) {
     assert.ok(n.includes(repo), 'notices missing ' + repo);
   }
+  assert.match(n, /Apache-2\.0/);
 });
 
 test('launch docs distinguish supported hosts from deferred hosts', () => {
@@ -211,6 +277,7 @@ test('launch docs distinguish supported hosts from deferred hosts', () => {
   assert.match(r, /Codex\s*\|\s*Supported/);
   assert.match(r, /Gemini \/ Copilot\s*\|\s*Not shipped/);
   assert.match(r, /hooks require explicit Codex trust/);
+  assert.match(r, /Impeccable design detector/);
   assert.match(r, /local-install-claude-dev\.sh/);
   assert.doesNotMatch(r, /local-install\.sh/);
 });

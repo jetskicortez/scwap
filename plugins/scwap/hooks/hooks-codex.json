@@ -2,12 +2,41 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/ponytail-activate.js\"",
+            "commandWindows": "node \"$env:PLUGIN_ROOT\\hooks\\ponytail-activate.js\"",
+            "timeout": 5,
+            "statusMessage": "Loading ponytail mode..."
+          },
+          {
+            "type": "command",
+            "command": "echo \"CAVEMAN MODE ACTIVE. Rules: drop articles, filler, pleasantries, and hedging. Fragments OK. Use short synonyms. Preserve technical terms, code, API names, CLI commands, commit keywords, and exact errors. Pattern: [thing] [action] [reason]. [next step]. Code, commits, PRs, legal, client-facing output, security warnings, irreversible confirmations, and clarification sequences: write normal. Toggle: /caveman lite|full|ultra|off or natural language.\"",
+            "timeout": 5,
+            "statusMessage": "Loading caveman mode..."
+          },
+          {
+            "type": "command",
             "command": "bash \"${PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start-codex",
-            "commandWindows": "& \"$env:PLUGIN_ROOT\\hooks\\run-hook.cmd\" session-start-codex"
+            "commandWindows": "& \"$env:PLUGIN_ROOT\\hooks\\run-hook.cmd\" session-start-codex",
+            "timeout": 10,
+            "statusMessage": "Loading superpowers..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/skills/impeccable/scripts/hook.mjs\"",
+            "commandWindows": "node \"$env:PLUGIN_ROOT\\skills\\impeccable\\scripts\\hook.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
           }
         ]
       }

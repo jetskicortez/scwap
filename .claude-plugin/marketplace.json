@@ -1,9 +1,9 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "scwap",
-  "description": "Super Caveman with a Ponytail — superpowers + ponytail + caveman, fused.",
+  "description": "Super Caveman with a Ponytail — superpowers + ponytail + caveman + impeccable, fused.",
   "owner": { "name": "Jesse Cortez", "url": "https://github.com/jetskicortez" },
   "plugins": [
-    { "name": "scwap", "description": "Process + build-restraint + terse-prose layers in one install.", "source": "./plugins/scwap", "category": "productivity" }
+    { "name": "scwap", "description": "Process + build-restraint + terse-prose layers plus Impeccable UI craft in one install.", "source": "./plugins/scwap", "category": "productivity" }
   ]
 }

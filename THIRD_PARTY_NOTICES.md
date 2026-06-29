@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-scwap vendors three open-source projects, each distributed under the MIT License. Each license is preserved verbatim in the `licenses/` directory of this repository.
+scwap vendors four open-source projects. Three are distributed under the MIT License; Impeccable is distributed under the Apache License 2.0. Each license is preserved verbatim in the `licenses/` directory of this repository.
 
 ---
 
@@ -32,6 +32,17 @@ scwap vendors three open-source projects, each distributed under the MIT License
 - **Version:** v6.0.3
 - **Pinned commit:** `896224c4b1879920ab573417e68fd51d2ccc9072`
 - **License file:** `licenses/LICENSE-superpowers`
+
+---
+
+## impeccable
+
+- **Project:** impeccable
+- **Repository:** github.com/pbakaus/impeccable
+- **License:** Apache-2.0
+- **Version:** 3.1.0 package / 3.8.0 skill plugin payload
+- **Pinned commit:** `c979ac37c361da564dcce100a4f2623d94ef54c8`
+- **License file:** `licenses/LICENSE-impeccable`
 
 ---
 

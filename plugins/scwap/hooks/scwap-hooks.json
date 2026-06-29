@@ -41,6 +41,17 @@
             "timeout": 5 }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/hook.mjs\"; exit 0",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\hook.mjs\" }",
+            "timeout": 5, "statusMessage": "Checking UI changes" }
+        ]
+      }
     ]
   }
 }

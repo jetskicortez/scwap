@@ -1,26 +1,27 @@
 {
   "name": "scwap",
-  "version": "0.2.1",
-  "description": "Super Caveman with a Ponytail — process (Superpowers) + build restraint (Ponytail) + terse prose (Caveman), one install, three composable layers.",
+  "version": "0.3.0",
+  "description": "Super Caveman with a Ponytail — process (Superpowers), build restraint (Ponytail), terse prose (Caveman), and frontend craft checks (Impeccable).",
   "author": { "name": "Jesse Cortez" },
   "homepage": "https://github.com/jetskicortez/scwap",
   "repository": "https://github.com/jetskicortez/scwap",
   "license": "MIT",
-  "keywords": ["yagni", "minimalism", "process", "tdd", "terse", "productivity"],
+  "keywords": ["yagni", "minimalism", "process", "tdd", "terse", "productivity", "design", "frontend"],
   "skills": "./skills/",
   "hooks": "./hooks/scwap-codex-hooks.json",
   "interface": {
     "displayName": "Super Caveman with a Ponytail",
-    "shortDescription": "Process + build restraint + terse prose, fused",
-    "longDescription": "Superpowers process discipline (plan/TDD/verify/review), Ponytail build restraint (YAGNI, smallest correct diff), and Caveman terse prose. Codex SessionStart hooks load all three layers from the plugin install; the Claude plugin adds live mode toggles + statusline.",
+    "shortDescription": "Process + restraint + terse prose + UI craft",
+    "longDescription": "Superpowers process discipline (plan/TDD/verify/review), Ponytail build restraint (YAGNI, smallest correct diff), Caveman terse prose, and Impeccable frontend craft checks. Codex SessionStart hooks load the SCWAP operating layers from the plugin install; PostToolUse hooks run the Impeccable design detector after UI edits.",
     "developerName": "Jesse Cortez",
     "category": "Productivity",
-    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "capabilities": ["Instructions", "Lifecycle hooks", "Design review"],
     "websiteURL": "https://github.com/jetskicortez/scwap",
     "defaultPrompt": [
       "Use scwap mode for this task.",
       "Build the smallest correct implementation.",
-      "Review this diff for over-engineering."
+      "Review this diff for over-engineering.",
+      "Polish this UI with Impeccable."
     ]
   }
 }
