@@ -135,6 +135,15 @@ Every step must contain the actual content an engineer needs. These are **plan f
 - Steps that describe what to do without showing how (code blocks required for code steps)
 - References to types, functions, or methods not defined in any task
 
+## Complete Artifacts, Not Edits
+
+Every step shows its artifact in full. Never describe an edit to code an earlier step already showed — show the whole replacement.
+
+- Declare the complete parameter list, signature, and import surface once, in the task that creates the file. No later task modifies it.
+- When a file is built up across tasks, delimit the mutable sections with explicit region markers (`# region NAME` / `# endregion NAME`) in the initial full version. Later tasks replace a named region verbatim and in its entirety.
+- "Add these to the `param()` block" is a plan failure for the same reason "Similar to Task N" is — the implementer may read tasks out of order — plus it can't be verified by reading. A real plan split a PowerShell `param()` across three tasks; the result didn't parse.
+- Counts stated in prose are claims — verify them against the code you showed. "Change its two `exit 0` calls" over a block with four exit paths sends the implementer past the ones the task existed to fix.
+
 ## Remember
 - Exact file paths always
 - Complete code in every step — if a step changes code, show the code
@@ -147,7 +156,7 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
+**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" and "Complete Artifacts, Not Edits" sections above. Fix them.
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
