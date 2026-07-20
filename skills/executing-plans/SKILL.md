@@ -41,6 +41,7 @@ After all tasks complete and verified:
 **STOP executing immediately when:**
 - Hit a blocker (missing dependency, test fails, instruction unclear)
 - Plan has critical gaps preventing starting
+- A step describes an edit to code an earlier step showed, instead of showing the full replacement — treat the plan as defective and say so rather than guessing
 - You don't understand an instruction
 - Verification fails repeatedly
 
