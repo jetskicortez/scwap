@@ -249,6 +249,56 @@ test('Codex PostToolUse hook runs impeccable detector from plugin root', () => {
   }
 });
 
+test('Codex model router is wired as advisory scwap context', () => {
+  for (const base of ['', 'plugins/scwap/']) {
+    const h = json(base + 'hooks/scwap-codex-hooks.json');
+    const sessionCommands = h.hooks.SessionStart
+      .flatMap((event) => event.hooks)
+      .map((hook) => hook.command + '\n' + (hook.commandWindows || ''))
+      .join('\n');
+    assert.match(sessionCommands, /model-router-codex/);
+
+    const hook = read(base + 'hooks/model-router-codex');
+    assert.match(hook, /SCWAP MODEL ROUTER ACTIVE/);
+    assert.match(hook, /gpt-5\.3-codex-spark/);
+    assert.match(hook, /gpt-5\.5/);
+    assert.match(hook, /\/model/);
+    assert.match(hook, /do not claim to switch silently/);
+
+    const skill = read(base + 'skills/model-router/SKILL.md');
+    assert.match(skill, /name:\s*model-router/);
+    assert.match(skill, /gpt-5\.3-codex-spark/);
+    assert.match(skill, /gpt-5\.5/);
+
+    const command = read(base + 'commands/scwap-models.toml');
+    assert.match(command, /model-router/);
+    assert.match(command, /\/model/);
+  }
+});
+
+test('Claude model router is wired as advisory scwap context', () => {
+  for (const base of ['', 'plugins/scwap/']) {
+    const h = json(base + 'hooks/scwap-hooks.json');
+    const sessionCommands = h.hooks.SessionStart
+      .flatMap((event) => event.hooks)
+      .map((hook) => hook.command + '\n' + (hook.commandWindows || ''))
+      .join('\n');
+    assert.match(sessionCommands, /model-router-claude/);
+
+    const hook = read(base + 'hooks/model-router-claude');
+    assert.match(hook, /SCWAP MODEL ROUTER ACTIVE/);
+    assert.match(hook, /fast\/cheap/);
+    assert.match(hook, /default/);
+    assert.match(hook, /deep/);
+    assert.match(hook, /do not claim to switch silently/);
+
+    const skill = read(base + 'skills/model-router/SKILL.md');
+    assert.match(skill, /Claude Code/);
+    assert.match(skill, /fast\/cheap/);
+    assert.match(skill, /deep/);
+  }
+});
+
 test('scwap-flow rule + skill present with frontmatter', () => {
   assert.ok(existsSync(root + 'rules/scwap-flow.md'));
   const skill = read('skills/scwap-flow/SKILL.md');
@@ -264,6 +314,7 @@ test('README + notices cover install and all bundled upstreams', () => {
   assert.match(r, /Claude Code/);
   assert.match(r, /Codex/);
   assert.match(r, /Impeccable/);
+  assert.match(r, /\/scwap-models/);
   const n = read('THIRD_PARTY_NOTICES.md');
   for (const repo of ['JuliusBrussee/caveman', 'DietrichGebert/ponytail', 'obra/superpowers', 'pbakaus/impeccable']) {
     assert.ok(n.includes(repo), 'notices missing ' + repo);

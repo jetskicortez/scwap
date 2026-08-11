@@ -6,44 +6,71 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
-const { getDefaultMode, safeWriteFlag, readFlag, VALID_MODES } = require('./caveman-config');
-
-// Modes handled by their own slash commands (/caveman-commit, etc.) — not
-// selectable via /caveman <arg>.
-const INDEPENDENT_MODES = new Set(['commit', 'review', 'compress']);
+const { getDefaultMode, safeWriteFlag, readFlag, recordModeChange } = require('./caveman-config');
+const { parseModeChange, INDEPENDENT_MODES } = require('./caveman-parse');
 
 const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const flagPath = path.join(claudeDir, '.caveman-active');
+// Remembers the prose mode active before a one-shot independent mode
+// (/caveman-commit etc.) so the next ordinary prompt can restore it (#599).
+const prevPath = path.join(claudeDir, '.caveman-active.prev');
 
 let input = '';
 process.stdin.on('data', chunk => { input += chunk; });
+// Abnormal stdin close (broken pipe, parent crash) emits 'error'; without a
+// listener Node throws it as an uncaught exception and the hook exits
+// non-zero — a spurious hook failure (#538). Hooks must always exit 0.
+process.stdin.on('error', () => process.exit(0));
 process.stdin.on('end', () => {
   try {
     const data = JSON.parse(input);
-    const prompt = (data.prompt || '').trim().toLowerCase();
+    // Collapse whitespace so phrase triggers still match multiline prompts —
+    // every regex below sees a single-line prompt (#598).
+    let prompt = (data.prompt || '').trim().toLowerCase().replace(/\s+/g, ' ');
 
-    // Natural language activation (e.g. "activate caveman", "turn on caveman mode",
-    // "talk like caveman"). README tells users they can say these, but the hook
-    // only matched /caveman commands — flag file and statusline stayed out of sync.
-    // Also recognize brevity requests ("less tokens", "be brief/terse", "fewer
-    // tokens", "shorter answers") — README promises these trigger caveman too.
-    if (/\b(activate|enable|turn on|start|talk like)\b.*\bcaveman\b/i.test(prompt) ||
-        /\bcaveman\b.*\b(mode|activate|enable|turn on|start)\b/i.test(prompt) ||
-        /\b(less tokens|fewer tokens|be brief|be terse|shorter answers)\b/i.test(prompt)) {
-      if (!/\b(stop|disable|turn off|deactivate)\b/i.test(prompt)) {
-        const mode = getDefaultMode();
-        if (mode !== 'off') {
-          safeWriteFlag(flagPath, mode);
-        }
+    // Unattended scheduled-task runs must never receive caveman styling —
+    // the per-turn reinforcement would hijack the task prompt, and a
+    // lightweight scheduled task would answer with a caveman greeting
+    // instead of doing its job. Claude Code wraps these in a
+    // <scheduled-task ...> marker; bail out completely when present: no flag
+    // mutation, no reinforcement, no stats. Interactive sessions are
+    // unaffected.
+    if (/<scheduled-task\b/.test(prompt)) return;
+
+    // Claude Code delivers slash commands to this hook as an envelope, not
+    // the literal command (#537):
+    //   <command-message>caveman</command-message>
+    //   <command-name>/caveman</command-name>
+    //   <command-args>ultra</command-args>
+    // (one-line or newline-separated — the collapse above normalizes both
+    // into single spaces; <command-args> may be empty or absent). Every
+    // switch below matches against the literal command string, so this
+    // envelope was a silent no-op for every slash command, including
+    // '/caveman off'. Reconstruct '<name> <args>' for /caveman* envelopes so
+    // the rest of this hook sees exactly what the user selected. A foreign
+    // command's envelope is left untouched, and natural-language detection
+    // is skipped for it so another command's own args can't misfire our
+    // activation/deactivation triggers.
+    let skipNaturalLanguage = false;
+    const envName = /<command-name>\s*([^<\s]+)\s*<\/command-name>/.exec(prompt);
+    if (envName) {
+      if (envName[1].startsWith('/caveman')) {
+        const envArgs = /<command-args>\s*([^<]*?)\s*<\/command-args>/.exec(prompt);
+        const args = envArgs ? envArgs[1].trim() : '';
+        prompt = args ? envName[1] + ' ' + args : envName[1];
+      } else {
+        skipNaturalLanguage = true;
       }
     }
 
-    // /caveman-stats [--share] — block the prompt and inject stats output as
-    // the hook's reason. The script reads the active session log, so we pass
+    // /caveman-stats [--share] — run the stats script and inject its output
+    // as additionalContext (#618), instructing the model to relay it
+    // verbatim. The script reads the active session log, so we pass
     // transcript_path through when Claude Code provides it.
     const statsMatch = /^\/caveman(?::caveman)?-stats(?:\s+(.*))?$/.exec(prompt);
     if (statsMatch) {
       const tailArgs = (statsMatch[1] || '').trim().split(/\s+/).filter(Boolean);
+      let block;
       try {
         const statsPath = path.join(__dirname, 'caveman-stats.js');
         const argv = [statsPath];
@@ -54,61 +81,50 @@ process.stdin.on('end', () => {
         if (sinceIdx !== -1 && tailArgs[sinceIdx + 1]) {
           argv.push('--since', tailArgs[sinceIdx + 1]);
         }
-        const out = execFileSync(process.execPath, argv, { encoding: 'utf8', timeout: 5000 });
-        process.stdout.write(JSON.stringify({ decision: 'block', reason: out.trim() }));
+        block = execFileSync(process.execPath, argv, { encoding: 'utf8', timeout: 5000 }).trim();
       } catch (e) {
-        process.stdout.write(JSON.stringify({
-          decision: 'block',
-          reason: 'caveman-stats: could not run stats script.\nTry manually: node hooks/caveman-stats.js'
-        }));
+        block = 'caveman-stats: could not run stats script.\nTry manually: node hooks/caveman-stats.js';
       }
+      process.stdout.write(JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: "UserPromptSubmit",
+          additionalContext: 'Print this stats block verbatim inside a fenced code block. Say nothing else.\n\n' + block
+        }
+      }));
       return;
     }
 
-    // Match /caveman commands
-    if (prompt.startsWith('/caveman')) {
-      const parts = prompt.split(/\s+/);
-      const cmd = parts[0]; // /caveman, /caveman-commit, /caveman-review, etc.
-      const arg = parts[1] || '';
+    // Shared mode-change parser (#602) — single source of truth with the
+    // opencode plugin for slash commands, namespaced /caveman:caveman-*,
+    // natural-language activation/deactivation, and brevity triggers.
+    const change = parseModeChange(prompt, { getDefaultMode, skipNaturalLanguage });
 
-      let mode = null;
-
-      if (cmd === '/caveman-commit') {
-        mode = 'commit';
-      } else if (cmd === '/caveman-review') {
-        mode = 'review';
-      } else if (cmd === '/caveman-compress' || cmd === '/caveman:caveman-compress') {
-        mode = 'compress';
-      } else if (cmd === '/caveman' || cmd === '/caveman:caveman') {
-        // Bare /caveman → activate at configured default
-        if (!arg) {
-          mode = getDefaultMode();
-        } else if (arg === 'off' || arg === 'stop' || arg === 'disable') {
-          mode = 'off';
-        } else if (arg === 'wenyan-full') {
-          // Canonical alias — config stores as 'wenyan'
-          mode = 'wenyan';
-        } else if (VALID_MODES.includes(arg) && !INDEPENDENT_MODES.has(arg)) {
-          mode = arg;
+    // Independent one-shot modes remember the prose mode active before them
+    // so the next ordinary prompt restores it (#599) — SKILL.md promises
+    // "Level persist until changed or session end", and a one-shot skill
+    // invocation should not count as "changed" forever.
+    let setIndependentThisTurn = false;
+    if (change && change.action === 'set') {
+      const mode = change.mode;
+      if (INDEPENDENT_MODES.has(mode)) {
+        // Save the prose mode being displaced — but never overwrite an
+        // already-saved one with another independent mode (/caveman-commit
+        // followed by /caveman-review must still restore the original).
+        const current = readFlag(flagPath);
+        if (current && !INDEPENDENT_MODES.has(current)) {
+          safeWriteFlag(prevPath, current);
         }
-        // Unknown arg → mode stays null, flag untouched (no silent overwrite)
+        setIndependentThisTurn = true;
       }
-
-      if (mode && mode !== 'off') {
-        safeWriteFlag(flagPath, mode);
-      } else if (mode === 'off') {
-        try { fs.unlinkSync(flagPath); } catch (e) {}
-      }
-    }
-
-    // Detect deactivation — natural language and slash commands
-    if (/\b(stop|disable|deactivate|turn off)\b.*\bcaveman\b/i.test(prompt) ||
-        /\bcaveman\b.*\b(stop|disable|deactivate|turn off)\b/i.test(prompt) ||
-        /\bnormal mode\b/i.test(prompt)) {
+      recordModeChange(claudeDir, mode); // #601: timestamped transition log
+      safeWriteFlag(flagPath, mode);
+    } else if (change && change.action === 'clear') {
+      recordModeChange(claudeDir, null); // #601
       try { fs.unlinkSync(flagPath); } catch (e) {}
+      try { fs.unlinkSync(prevPath); } catch (e) {}
     }
 
-    // Per-turn reinforcement: emit a structured reminder when caveman is active.
+    // Per-turn reinforcement: emit a short reminder when caveman is active.
     // The SessionStart hook injects the full ruleset once, but models lose it
     // when other plugins inject competing style instructions every turn.
     // This keeps caveman visible in the model's attention on every user message.
@@ -119,14 +135,35 @@ process.stdin.on('end', () => {
     // If the flag is missing, corrupted, oversized, or a symlink pointing at
     // something like ~/.ssh/id_rsa, readFlag returns null and we emit nothing
     // — never inject untrusted bytes into model context.
-    const activeMode = readFlag(flagPath);
-    if (activeMode && !INDEPENDENT_MODES.has(activeMode)) {
+    let activeMode = readFlag(flagPath);
+
+    // One-shot restore (#599): an independent mode set on a PREVIOUS prompt
+    // has served its turn — bring back the prose mode that was active before
+    // it, or deactivate if caveman wasn't active then.
+    if (activeMode && INDEPENDENT_MODES.has(activeMode) && !setIndependentThisTurn) {
+      const prev = readFlag(prevPath);
+      try { fs.unlinkSync(prevPath); } catch (e) {}
+      if (prev && !INDEPENDENT_MODES.has(prev)) {
+        recordModeChange(claudeDir, prev); // #601
+        safeWriteFlag(flagPath, prev);
+        activeMode = prev;
+      } else {
+        recordModeChange(claudeDir, null); // #601
+        try { fs.unlinkSync(flagPath); } catch (e) {}
+        activeMode = null;
+      }
+    }
+
+    // #634: a repo-local .caveman.json / .caveman/config.json can set
+    // defaultMode "off" to opt a project out of caveman entirely. Thread the
+    // hook stdin's cwd through so that check resolves for the session's
+    // directory, not this hook process's own cwd. This gates ONLY the
+    // reinforcement output below — it never deletes or writes the flag file.
+    if (activeMode && !INDEPENDENT_MODES.has(activeMode) && getDefaultMode(data.cwd) !== 'off') {
       process.stdout.write(JSON.stringify({
         hookSpecificOutput: {
           hookEventName: "UserPromptSubmit",
-          additionalContext: "CAVEMAN MODE ACTIVE (" + activeMode + "). " +
-            "Drop articles/filler/pleasantries/hedging. Fragments OK. " +
-            "Code/commits/security: write normal."
+          additionalContext: `CAVEMAN MODE ACTIVE (${activeMode}) — session ruleset applies.`
         }
       }));
     }
