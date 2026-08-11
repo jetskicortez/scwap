@@ -15,7 +15,12 @@ test('plugin.json valid + required fields', () => {
   assert.match(p.version, /^\d+\.\d+\.\d+$/);
   assert.equal(p.hooks, './hooks/scwap-hooks.json');
   assert.equal(p.skills, './skills/');
-  assert.deepEqual(p.agents, ['./agents/impeccable-manual-edit-applier.md']);
+  assert.deepEqual(p.agents, [
+    './agents/impeccable-manual-edit-applier.md',
+    './agents/impeccable-asset-producer.md',
+    './agents/impeccable-documenter.md',
+    './agents/impeccable-finish-reviewer.md',
+  ]);
 });
 
 test('marketplace.json valid + lists scwap plugin', () => {
@@ -63,6 +68,8 @@ test('nested Codex plugin manifest and runtime payload resolve', () => {
     'plugins/scwap/skills/impeccable/scripts/hook.mjs',
     'plugins/scwap/agents/impeccable-manual-edit-applier.md',
     'plugins/scwap/agents/impeccable-asset-producer.md',
+    'plugins/scwap/agents/impeccable-documenter.md',
+    'plugins/scwap/agents/impeccable-finish-reviewer.md',
     'plugins/scwap/rules/scwap-flow.md',
   ]) {
     assert.ok(existsSync(root + f), 'missing nested payload ' + f);
@@ -132,19 +139,23 @@ test('impeccable runtime vendored', () => {
   for (const base of ['', 'plugins/scwap/']) {
     for (const f of [
       'skills/impeccable/SKILL.md',
-      'skills/impeccable/reference/brand.md',
-      'skills/impeccable/reference/codex.md',
+      'skills/impeccable/reference/craft-floor.md',
       'skills/impeccable/reference/hooks.md',
       'skills/impeccable/reference/live.md',
-      'skills/impeccable/reference/product.md',
+      'skills/impeccable/reference/new-work.md',
+      'skills/impeccable/reference/operate.md',
+      'skills/impeccable/reference/routing.md',
       'skills/impeccable/scripts/hook.mjs',
       'skills/impeccable/scripts/hook-lib.mjs',
       'skills/impeccable/scripts/detect.mjs',
+      'skills/impeccable/scripts/doctor.mjs',
       'skills/impeccable/scripts/live-server.mjs',
       'skills/impeccable/scripts/detector/detect-antipatterns.mjs',
       'skills/impeccable/scripts/detector/cli/main.mjs',
       'agents/impeccable-manual-edit-applier.md',
       'agents/impeccable-asset-producer.md',
+      'agents/impeccable-documenter.md',
+      'agents/impeccable-finish-reviewer.md',
       'licenses/LICENSE-impeccable',
     ]) {
       assert.ok(existsSync(root + base + f), 'missing ' + base + f);
@@ -156,9 +167,16 @@ test('impeccable agent frontmatter preserved for host discovery', () => {
   for (const base of ['', 'plugins/scwap/']) {
     const manual = read(base + 'agents/impeccable-manual-edit-applier.md');
     const asset = read(base + 'agents/impeccable-asset-producer.md');
+    const documenter = read(base + 'agents/impeccable-documenter.md');
+    const reviewer = read(base + 'agents/impeccable-finish-reviewer.md');
     assert.match(manual, /codex-name:\s*impeccable_manual_edit_applier/);
     assert.match(asset, /codex-name:\s*impeccable_asset_producer/);
+    assert.match(documenter, /codex-name:\s*impeccable_documenter/);
+    assert.match(reviewer, /codex-name:\s*impeccable_finish_reviewer/);
+    assert.match(manual, /providers:\s*codex/);
     assert.match(asset, /providers:\s*codex/);
+    assert.match(documenter, /providers:\s*codex/);
+    assert.match(reviewer, /providers:\s*codex/);
   }
 });
 

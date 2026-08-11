@@ -40,7 +40,7 @@ scwap vendors four open-source projects. Three are distributed under the MIT Lic
 - **Project:** impeccable
 - **Repository:** github.com/pbakaus/impeccable
 - **License:** Apache-2.0
-- **Version:** 3.1.0 package / 3.8.0 skill plugin payload
+- **Version:** 3.5.0 package / 4.0.4 skill plugin payload
 - **Pinned commit:** `c979ac37c361da564dcce100a4f2623d94ef54c8`
 - **License file:** `licenses/LICENSE-impeccable`
 
