@@ -1,13 +1,16 @@
 {
   "name": "scwap",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Super Caveman with a Ponytail — process (Superpowers), build restraint (Ponytail), terse prose (Caveman), and frontend craft checks (Impeccable).",
   "author": { "name": "Jesse Cortez" },
   "homepage": "https://github.com/jetskicortez/scwap",
   "license": "MIT",
   "skills": "./skills/",
   "agents": [
-    "./agents/impeccable-manual-edit-applier.md"
+    "./agents/impeccable-manual-edit-applier.md",
+    "./agents/impeccable-asset-producer.md",
+    "./agents/impeccable-documenter.md",
+    "./agents/impeccable-finish-reviewer.md"
   ],
   "hooks": "./hooks/scwap-hooks.json"
 }
