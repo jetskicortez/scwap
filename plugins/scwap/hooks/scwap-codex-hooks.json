@@ -23,6 +23,13 @@
             "commandWindows": "& \"$env:PLUGIN_ROOT\\hooks\\run-hook.cmd\" session-start-codex",
             "timeout": 10,
             "statusMessage": "Loading superpowers..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"${PLUGIN_ROOT}/hooks/run-hook.cmd\" model-router-codex",
+            "commandWindows": "& \"$env:PLUGIN_ROOT\\hooks\\run-hook.cmd\" model-router-codex",
+            "timeout": 5,
+            "statusMessage": "Loading model router..."
           }
         ]
       }

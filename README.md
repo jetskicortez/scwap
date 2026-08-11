@@ -1,6 +1,6 @@
 # Super Caveman with a Ponytail (scwap)
 
-One plugin, three core operating layers plus Impeccable UI craft: structured process, build restraint, disciplined prose, and frontend design checks.
+One plugin, three core operating layers plus Codex model routing and Impeccable UI craft: structured process, build restraint, disciplined prose, task/model fit, and frontend design checks.
 
 ---
 
@@ -9,7 +9,7 @@ One plugin, three core operating layers plus Impeccable UI craft: structured pro
 | Host | Status | Notes |
 |---|---|---|
 | Claude Code | Supported | Installs through Claude Code's plugin marketplace flow. Hooks provide startup context, `/ponytail` and `/caveman` toggles, Impeccable post-edit checks, and optional statusline support. |
-| Codex | Supported | Installs through Codex's plugin marketplace flow. Skills load as `scwap:*`; hooks require explicit Codex trust before startup context and Impeccable design detector checks run. Windows hooks use `commandWindows` overrides. |
+| Codex | Supported | Installs through Codex's plugin marketplace flow. Skills load as `scwap:*`; hooks require explicit Codex trust before startup context, model routing guidance, and Impeccable design detector checks run. Windows hooks use `commandWindows` overrides. |
 | Gemini / Copilot | Not shipped | Deferred until those harnesses have verified plugin or instruction-loading paths. |
 
 `README.md` is the public launch source of truth. Files under `docs/archive/` are historical implementation notes and may describe superseded layouts.
@@ -38,6 +38,8 @@ brainstorm / plan  →  build the minimum  →  polish UI when relevant  →  pr
 Mapped to bundled skills: `brainstorming` + `writing-plans` → build → `impeccable` for frontend craft when UI is touched → `test-driven-development` + `verification-before-completion` + `requesting-code-review`. In Codex, those appear with the plugin prefix, e.g. `scwap:brainstorming` and `scwap:impeccable`.
 
 The `/scwap-flow` skill documents how the layers compose and which one leads. `rules/scwap-flow.md` is a portable rule you can drop into a project's instructions (e.g. `CLAUDE.md`) to make the sequence explicit for that project.
+
+Codex also loads advisory model routing context. It recommends `gpt-5.3-codex-spark` for reversible mechanical work, `gpt-5.4-mini` when Spark is unavailable and the task is routine, and `gpt-5.5` for judgment-heavy or external-state work. Run `/scwap-models` to classify the current task and get the exact `/model` switch command. SCWAP advises; it does not silently change the active model.
 
 ---
 

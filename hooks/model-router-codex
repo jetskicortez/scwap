@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+context=$(cat <<'TEXT'
+SCWAP MODEL ROUTER ACTIVE.
+Use gpt-5.3-codex-spark for reversible mechanical work: repo search, manifest checks, lint/tests, small docs, tiny path/config fixes, and no-change monitors.
+Use gpt-5.4-mini when Spark is unavailable and the task is still routine.
+Use gpt-5.5 for architecture, non-trivial implementation, security, money, legal, client-facing text, external sends, production deploys, merge/publish verification, and ambiguous judgment calls.
+If the active model is wrong, state the exact switch: /model gpt-5.3-codex-spark, /model gpt-5.4-mini, or /model gpt-5.5. SCWAP can advise; do not claim to switch silently.
+TEXT
+)
+
+escape_for_json() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/\\r}"
+  s="${s//$'\t'/\\t}"
+  printf '%s' "$s"
+}
+
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$(escape_for_json "$context")"

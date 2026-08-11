@@ -14,7 +14,10 @@
             "timeout": 5, "statusMessage": "Loading caveman..." },
           { "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
-            "async": false, "timeout": 10, "statusMessage": "Loading superpowers..." }
+            "async": false, "timeout": 10, "statusMessage": "Loading superpowers..." },
+          { "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" model-router-claude",
+            "async": false, "timeout": 5, "statusMessage": "Loading model router..." }
         ]
       }
     ],
