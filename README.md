@@ -39,7 +39,9 @@ Mapped to bundled skills: `brainstorming` + `writing-plans` → build → `impec
 
 The `/scwap-flow` skill documents how the layers compose and which one leads. `rules/scwap-flow.md` is a portable rule you can drop into a project's instructions (e.g. `CLAUDE.md`) to make the sequence explicit for that project.
 
-Codex also loads advisory model routing context. It recommends `gpt-5.3-codex-spark` for reversible mechanical work, `gpt-5.4-mini` when Spark is unavailable and the task is routine, and `gpt-5.5` for judgment-heavy or external-state work. Run `/scwap-models` to classify the current task and get the exact `/model` switch command. SCWAP advises; it does not silently change the active model.
+Codex also loads advisory model routing context. It keeps the active model by default, recommends `gpt-6-luna` for bounded mechanical or repetitive work, `gpt-6-sol` for normal work, and `gpt-6-astra` only for the hardest end-to-end work. Routing follows complexity, consequence, reversibility, and ambiguity—not domain labels. Run `/scwap-models` to classify the current task and get an exact `/model` switch only when the benefit is material. SCWAP advises; it does not silently change the active model.
+
+To check a local install against source, set `SCWAP_INSTALLED_ROOT` to its plugin directory and run `node --test tests/structure.test.mjs`.
 
 ---
 

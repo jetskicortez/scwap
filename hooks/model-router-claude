@@ -3,8 +3,10 @@ set -euo pipefail
 
 cat <<'TEXT'
 SCWAP MODEL ROUTER ACTIVE.
+Keep the current active model by default. Recommend a switch only when expected benefit is material.
 Use the fast/cheap Claude model for reversible mechanical work: repo search, manifest checks, lint/tests, small docs, tiny path/config fixes, and no-change monitors.
 Use the default Claude model for normal implementation and review.
-Use the deep Claude model for architecture, non-trivial implementation, security, money, legal, client-facing text, external sends, production deploys, merge/publish verification, and ambiguous judgment calls.
+Use the deep Claude model for genuinely complex or high-consequence work.
+Route by complexity, consequence, reversibility, and ambiguity. Do not escalate solely because a task mentions money, legal, security, client-facing content, or external systems.
 If the active model is wrong, state the exact model switch supported by this Claude Code install. SCWAP can advise; do not claim to switch silently.
 TEXT
