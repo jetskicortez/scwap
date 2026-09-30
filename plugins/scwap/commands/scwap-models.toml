@@ -1,2 +1,2 @@
 description = "Recommend the right model for the current task"
-prompt = "Use model-router (scwap:model-router in Codex). Classify the current task as fast/Spark, default/mini, or deep/full-model work. If the active model should change, say the exact switch command supported by this host; in Codex this is /model. Do not claim SCWAP can switch models silently."
+prompt = "Use model-router (scwap:model-router in Codex). Keep the active model by default. Recommend Luna, Sol, or Astra only when expected benefit is material, based on complexity, consequence, reversibility, and ambiguity rather than domain labels. If the active model should change, say the exact switch command supported by this host; in Codex this is /model. Do not claim SCWAP can switch models silently."

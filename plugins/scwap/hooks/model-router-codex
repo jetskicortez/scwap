@@ -3,10 +3,12 @@ set -euo pipefail
 
 context=$(cat <<'TEXT'
 SCWAP MODEL ROUTER ACTIVE.
-Use gpt-5.3-codex-spark for reversible mechanical work: repo search, manifest checks, lint/tests, small docs, tiny path/config fixes, and no-change monitors.
-Use gpt-5.4-mini when Spark is unavailable and the task is still routine.
-Use gpt-5.5 for architecture, non-trivial implementation, security, money, legal, client-facing text, external sends, production deploys, merge/publish verification, and ambiguous judgment calls.
-If the active model is wrong, state the exact switch: /model gpt-5.3-codex-spark, /model gpt-5.4-mini, or /model gpt-5.5. SCWAP can advise; do not claim to switch silently.
+Keep current active model by default. Recommend a switch only when expected benefit is material.
+Use gpt-6-luna for bounded, reversible mechanical or repetitive cost-sensitive work.
+Use gpt-6-sol for normal implementation, review, debugging, research, drafting, and professional work.
+Use gpt-6-astra only for the hardest end-to-end work where Sol is likely insufficient.
+Route by complexity, consequence, reversibility, and ambiguity. Do not escalate solely because a task mentions money, legal, security, client-facing content, or external systems.
+If the active model is materially mismatched, state the exact /model switch. SCWAP can advise; do not claim to switch silently.
 TEXT
 )
 

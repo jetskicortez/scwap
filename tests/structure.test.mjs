@@ -278,19 +278,47 @@ test('Codex model router is wired as advisory scwap context', () => {
 
     const hook = read(base + 'hooks/model-router-codex');
     assert.match(hook, /SCWAP MODEL ROUTER ACTIVE/);
-    assert.match(hook, /gpt-5\.3-codex-spark/);
-    assert.match(hook, /gpt-5\.5/);
+    assert.match(hook, /Keep current active model by default/);
+    for (const model of [
+      'gpt-6-luna',
+      'gpt-6-sol',
+      'gpt-6-astra',
+    ]) assert.match(hook, new RegExp(model.replaceAll('.', '\\.')));
+    assert.doesNotMatch(hook, /gpt-5\./);
+    assert.match(hook, /Do not escalate solely because a task mentions/);
     assert.match(hook, /\/model/);
     assert.match(hook, /do not claim to switch silently/);
 
     const skill = read(base + 'skills/model-router/SKILL.md');
     assert.match(skill, /name:\s*model-router/);
-    assert.match(skill, /gpt-5\.3-codex-spark/);
-    assert.match(skill, /gpt-5\.5/);
+    assert.match(skill, /Keep the current active model by default/);
+    assert.match(skill, /gpt-6-luna/);
+    assert.match(skill, /gpt-6-sol/);
+    assert.match(skill, /gpt-6-astra/);
+    assert.doesNotMatch(skill, /gpt-5\./);
+    assert.match(skill, /Domain labels alone never trigger escalation/);
 
     const command = read(base + 'commands/scwap-models.toml');
     assert.match(command, /model-router/);
+    assert.match(command, /Keep the active model by default/);
+    assert.match(command, /Luna, Sol, or Astra/);
     assert.match(command, /\/model/);
+    assert.doesNotMatch(command, /default\/mini|deep\/full|gpt-5\.5/);
+  }
+
+  assert.equal(read('hooks/model-router-codex'), read('plugins/scwap/hooks/model-router-codex'));
+  assert.equal(read('skills/model-router/SKILL.md'), read('plugins/scwap/skills/model-router/SKILL.md'));
+  assert.equal(read('commands/scwap-models.toml'), read('plugins/scwap/commands/scwap-models.toml'));
+});
+
+if (process.env.SCWAP_INSTALLED_ROOT) test('installed model router matches source', () => {
+  for (const path of [
+    'hooks/model-router-codex',
+    'hooks/model-router-claude',
+    'skills/model-router/SKILL.md',
+    'commands/scwap-models.toml',
+  ]) {
+    assert.equal(readFileSync(`${process.env.SCWAP_INSTALLED_ROOT}/${path}`, 'utf8'), read(path), path);
   }
 });
 
@@ -308,13 +336,17 @@ test('Claude model router is wired as advisory scwap context', () => {
     assert.match(hook, /fast\/cheap/);
     assert.match(hook, /default/);
     assert.match(hook, /deep/);
+    assert.match(hook, /Do not escalate solely because a task mentions/);
     assert.match(hook, /do not claim to switch silently/);
 
     const skill = read(base + 'skills/model-router/SKILL.md');
     assert.match(skill, /Claude Code/);
     assert.match(skill, /fast\/cheap/);
     assert.match(skill, /deep/);
+    assert.match(skill, /Domain labels alone never trigger escalation/);
   }
+
+  assert.equal(read('hooks/model-router-claude'), read('plugins/scwap/hooks/model-router-claude'));
 });
 
 test('scwap-flow rule + skill present with frontmatter', () => {
