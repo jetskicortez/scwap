@@ -13,3 +13,9 @@ Use `fix/model-routing-defaults` in `C:\Users\Jetsk\Code\scwap-model-routing-fix
 - [x] Copy the four router files into the installed SCWAP plugin cache and verify source-to-install parity.
 - [x] Run the installed Windows hook wrapper and confirm valid JSON with the new model tiers.
 - [x] Run `node --test tests/structure.test.mjs` with `SCWAP_INSTALLED_ROOT` set and inspect `git diff --check`.
+
+## Handoff
+
+- PR: https://github.com/jetskicortez/scwap/pull/5 (open; merge awaits separate approval).
+- The local installed cache at `C:\Users\Jetsk\.codex\plugins\cache\scwap\scwap\0.3.2` matches the source router files. The Windows hook wrapper returned the new JSON payload; 32 structural tests passed with installed parity enabled.
+- Repository manifests remain at 0.3.1 while the local cache is 0.3.2. A reinstall can overwrite this local correction until the source change is merged and released. Recheck installed parity after any reinstall.
