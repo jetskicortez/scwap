@@ -16,6 +16,6 @@ Use `fix/model-routing-defaults` in `C:\Users\Jetsk\Code\scwap-model-routing-fix
 
 ## Handoff
 
-- PR: https://github.com/jetskicortez/scwap/pull/5 (open; merge awaits separate approval).
+- PR: https://github.com/jetskicortez/scwap/pull/5 (merge and release approved September 30, 2026).
 - The local installed cache at `C:\Users\Jetsk\.codex\plugins\cache\scwap\scwap\0.3.2` matches the source router files. The Windows hook wrapper returned the new JSON payload; 32 structural tests passed with installed parity enabled.
-- Repository manifests remain at 0.3.1 while the local cache is 0.3.2. A reinstall can overwrite this local correction until the source change is merged and released. Recheck installed parity after any reinstall.
+- Release manifests are bumped to 0.3.2. The existing local 0.3.2 cache may contain unrelated unreleased changes; reinstall from the published release, then recheck installed parity.
