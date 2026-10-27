@@ -61,7 +61,7 @@ or when asked to clarify. Code, commits, PRs, legal, and client-facing output: w
 ## Layer 4 — Impeccable (frontend craft: how UI quality is protected)
 Use for frontend, product, design, visual polish, critique, live UI work, and design-system
 context. The bundled skill provides design/product references, live tooling scripts, and
-specialist agents. The post-edit hook checks Edit/Write/MultiEdit changes to UI files for
+specialist agents. The post-edit hook (native engine, downloaded once on first run) checks Edit/Write/MultiEdit changes to UI files for
 design anti-patterns and emits correction reminders.
 
 ---

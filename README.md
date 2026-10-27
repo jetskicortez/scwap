@@ -101,7 +101,9 @@ codex plugin marketplace add ./scwap
 /caveman off
 ```
 
-Superpowers process is always on while scwap is installed. Toggle ponytail and caveman independently based on context. Impeccable is skill-triggered for UI/product/design work and hook-triggered after relevant edits.
+Superpowers process is always on while scwap is installed. Toggle ponytail and caveman independently based on context. Impeccable is skill-triggered for UI/product/design work and hook-triggered after relevant edits, with a deep pass on Stop.
+
+Since Impeccable 4.4 the skill's launcher runs a native engine binary. On first run (the scwap SessionStart hook) it downloads the engine version pinned in `skills/impeccable/scripts/VERSION` from the Impeccable GitHub releases into `~/.impeccable/bin/`, verified against `skills/impeccable/scripts/engine-checksums.txt` and refused on mismatch. Set `IMPECCABLE_BIN` to point at a preinstalled engine instead. Impeccable's roll API records anonymous usage unless you opt out with `DO_NOT_TRACK=1` or `IMPECCABLE_NO_TELEMETRY=1`.
 
 ---
 

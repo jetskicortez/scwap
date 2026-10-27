@@ -44,9 +44,9 @@ scwap vendors four open-source projects. ponytail and superpowers are distribute
 - **Project:** impeccable
 - **Repository:** github.com/pbakaus/impeccable
 - **License:** Apache-2.0
-- **Version:** 3.5.0 package / 4.0.4 skill plugin payload
-- **Pinned commit:** `c979ac37c361da564dcce100a4f2623d94ef54c8`
-- **License file:** `licenses/LICENSE-impeccable`
+- **Version:** 4.8.0 (skill payload from `.claude/skills/impeccable`, agents from `.claude/agents`; engine binary 0.1.18 is fetched by the launcher, not vendored)
+- **Pinned commit:** `414603bf14c7a344edb466bb1f85690c77ce8b7d` (tag cli-v4.8.0)
+- **License file:** `licenses/LICENSE-impeccable` (NOTICE preserved as `licenses/NOTICE-impeccable`)
 
 ---
 

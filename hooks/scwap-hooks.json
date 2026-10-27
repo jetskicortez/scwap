@@ -31,6 +31,13 @@
             "async": false,
             "timeout": 5,
             "statusMessage": "Loading model router..."
+          },
+          {
+            "type": "command",
+            "command": "IMPECCABLE_PROVIDER_ID=claude-code \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/impeccable\" hook; exit 0",
+            "commandWindows": "$env:IMPECCABLE_PROVIDER_ID='claude-code'; & \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\impeccable.cmd\" hook",
+            "timeout": 60,
+            "statusMessage": "Preparing impeccable engine (first run downloads it)"
           }
         ]
       }
@@ -77,10 +84,23 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/hook.mjs\"; exit 0",
-            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\hook.mjs\" }",
+            "command": "IMPECCABLE_PROVIDER_ID=claude-code \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/impeccable\" hook; exit 0",
+            "commandWindows": "$env:IMPECCABLE_PROVIDER_ID='claude-code'; & \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\impeccable.cmd\" hook",
             "timeout": 5,
             "statusMessage": "Checking UI changes"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "IMPECCABLE_PROVIDER_ID=claude-code \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/impeccable\" hook; exit 0",
+            "commandWindows": "$env:IMPECCABLE_PROVIDER_ID='claude-code'; & \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\impeccable.cmd\" hook",
+            "timeout": 30,
+            "statusMessage": "Design deep pass"
           }
         ]
       }

@@ -11,12 +11,14 @@
 #   SUPERPOWERS_REF=v7.0.1 PONYTAIL_REF=v5.3.2 CAVEMAN_REF=v4.0.1 \
 #     bash scripts/update-vendor.sh
 #
-# Refs are tags or branch names (not bare SHAs); they default to each upstream's default-branch HEAD. Impeccable is NOT
+# Refs are tags or branch names (not bare SHAs); they default to each upstream's default-branch HEAD.
+# Impeccable is only vendored when IMPECCABLE_REF is set (see its block below). Impeccable is NOT
 # handled here: since 4.4.0 its skill ships a launcher that downloads a native
 # engine binary; re-vendoring it is a deliberate, reviewed step.
 #
 # Work happens in $REPO/.vendor-tmp/ (gitignored, removed on success).
 # Does not push, bump versions, edit THIRD_PARTY_NOTICES.md, or run tests.
+# After an impeccable bump also run: git update-index --chmod=+x on both copies of skills/impeccable/scripts/impeccable.
 # =============================================================================
 
 set -euo pipefail
@@ -75,6 +77,19 @@ cp "$SP/LICENSE" "$P/licenses/LICENSE-superpowers"
 SUPERPOWERS_SHA="$(git -C "$SP" rev-parse HEAD)"
 # (hooks.json is replaced by hooks/scwap-hooks.json; session-start-codex is scwap-owned)
 
+# --- impeccable (opt-in: set IMPECCABLE_REF, e.g. cli-v4.8.0) ---------------
+# The skill ships a launcher that downloads a checksum-pinned native engine on
+# first run, so re-vendoring it is a reviewed step, not an automatic one.
+IMPECCABLE_SHA="(skipped)"
+if [[ -n "${IMPECCABLE_REF:-}" ]]; then
+  clone_upstream impeccable https://github.com/pbakaus/impeccable "$IMPECCABLE_REF"
+  IM="$VENDOR_TMP/impeccable"
+  rm -rf "$P/skills/impeccable"; cp -r "$IM/.claude/skills/impeccable" "$P/skills/impeccable"; echo "    skill: impeccable"
+  cp "$IM/LICENSE" "$P/licenses/LICENSE-impeccable"; cp "$IM/NOTICE.md" "$P/licenses/NOTICE-impeccable"
+  echo "    agents: re-apply scwap frontmatter (codex-name, providers: codex) by hand from $IM/.claude/agents/"
+  IMPECCABLE_SHA="$(git -C "$IM" rev-parse HEAD)"
+fi
+
 # --- mirror payload to the repo root copy -----------------------------------
 for d in hooks skills commands agents licenses rules; do rm -rf "$REPO/$d"; cp -r "$P/$d" "$REPO/$d"; done
 cp "$P/THIRD_PARTY_NOTICES.md" "$REPO/THIRD_PARTY_NOTICES.md"
@@ -87,6 +102,7 @@ cat <<SUMMARY
     ponytail    $PONYTAIL_SHA
     caveman     $CAVEMAN_SHA
     superpowers $SUPERPOWERS_SHA
+    impeccable  $IMPECCABLE_SHA
   Manual steps:
     1. Update pins/versions in plugins/scwap/THIRD_PARTY_NOTICES.md, then
        cp it to the repo root.

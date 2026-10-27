@@ -67,7 +67,8 @@ test('nested Codex plugin manifest and runtime payload resolve', () => {
     'plugins/scwap/hooks/ponytail-map.js',
     'plugins/scwap/skills/using-superpowers/SKILL.md',
     'plugins/scwap/skills/impeccable/SKILL.md',
-    'plugins/scwap/skills/impeccable/scripts/hook.mjs',
+    'plugins/scwap/skills/impeccable/scripts/impeccable',
+    'plugins/scwap/skills/impeccable/scripts/impeccable.cmd',
     'plugins/scwap/agents/impeccable-manual-edit-applier.md',
     'plugins/scwap/agents/impeccable-asset-producer.md',
     'plugins/scwap/agents/impeccable-documenter.md',
@@ -147,13 +148,12 @@ test('impeccable runtime vendored', () => {
       'skills/impeccable/reference/new-work.md',
       'skills/impeccable/reference/operate.md',
       'skills/impeccable/reference/routing.md',
-      'skills/impeccable/scripts/hook.mjs',
-      'skills/impeccable/scripts/hook-lib.mjs',
-      'skills/impeccable/scripts/detect.mjs',
-      'skills/impeccable/scripts/doctor.mjs',
-      'skills/impeccable/scripts/live-server.mjs',
-      'skills/impeccable/scripts/detector/detect-antipatterns.mjs',
-      'skills/impeccable/scripts/detector/cli/main.mjs',
+      'skills/impeccable/scripts/impeccable',
+      'skills/impeccable/scripts/impeccable.cmd',
+      'skills/impeccable/scripts/VERSION',
+      'skills/impeccable/scripts/engine-checksums.txt',
+      'skills/impeccable/scripts/command-metadata.json',
+      'licenses/NOTICE-impeccable',
       'agents/impeccable-manual-edit-applier.md',
       'agents/impeccable-asset-producer.md',
       'agents/impeccable-documenter.md',
@@ -265,7 +265,9 @@ test('Codex PostToolUse hook runs impeccable detector from plugin root', () => {
     const detectorEvent = postToolUse.find((x) => /Edit\|Write\|MultiEdit/.test(x.matcher || ''));
     assert.ok(detectorEvent, hookFile + ' missing Impeccable edit matcher');
     const commands = detectorEvent.hooks.map((x) => x.command).join('\n');
-    assert.match(commands, /skills\/impeccable\/scripts\/hook\.mjs/);
+    assert.match(commands, /skills\/impeccable\/scripts\/impeccable" hook/);
+    assert.match(detectorEvent.hooks.map((x) => x.commandWindows).join('\n'), /impeccable\.cmd" hook/);
+    assert.ok(h.hooks.Stop, hookFile + ' missing Stop deep-pass hook');
     assert.doesNotMatch(commands, /\.codex\/hooks\.json/);
   }
 });
