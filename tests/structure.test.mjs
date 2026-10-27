@@ -264,6 +264,7 @@ test('Codex PostToolUse hook runs impeccable detector from plugin root', () => {
     assert.ok(postToolUse, hookFile + ' missing PostToolUse hooks');
     const detectorEvent = postToolUse.find((x) => /Edit\|Write\|MultiEdit/.test(x.matcher || ''));
     assert.ok(detectorEvent, hookFile + ' missing Impeccable edit matcher');
+    assert.match(detectorEvent.matcher, /apply_patch/, hookFile + ' matcher must include Codex apply_patch tool');
     const commands = detectorEvent.hooks.map((x) => x.command).join('\n');
     assert.match(commands, /skills\/impeccable\/scripts\/impeccable" hook/);
     assert.match(detectorEvent.hooks.map((x) => x.commandWindows).join('\n'), /impeccable\.cmd" hook/);
