@@ -4,44 +4,70 @@
       {
         "matcher": "startup|resume|clear|compact",
         "hooks": [
-          { "type": "command",
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/ponytail-activate.js\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\ponytail-activate.js\" }",
-            "timeout": 5, "statusMessage": "Loading ponytail..." },
-          { "type": "command",
+            "timeout": 10,
+            "statusMessage": "Loading ponytail..."
+          },
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/caveman-activate.js\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\caveman-activate.js\" }",
-            "timeout": 5, "statusMessage": "Loading caveman..." },
-          { "type": "command",
+            "timeout": 10,
+            "statusMessage": "Loading caveman..."
+          },
+          {
+            "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
-            "async": false, "timeout": 10, "statusMessage": "Loading superpowers..." },
-          { "type": "command",
+            "async": false,
+            "timeout": 10,
+            "statusMessage": "Loading superpowers..."
+          },
+          {
+            "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" model-router-claude",
-            "async": false, "timeout": 5, "statusMessage": "Loading model router..." }
+            "async": false,
+            "timeout": 5,
+            "statusMessage": "Loading model router..."
+          }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command",
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/ponytail-mode-tracker.js\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\ponytail-mode-tracker.js\" }",
-            "timeout": 5 },
-          { "type": "command",
+            "timeout": 5
+          },
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/caveman-mode-tracker.js\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\caveman-mode-tracker.js\" }",
-            "timeout": 5 }
+            "timeout": 5
+          }
         ]
       }
     ],
     "SubagentStart": [
       {
         "hooks": [
-          { "type": "command",
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/ponytail-subagent.js\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\ponytail-subagent.js\" }",
-            "timeout": 5 }
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/caveman-activate.js\" --subagent; exit 0",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\caveman-activate.js\" --subagent }",
+            "timeout": 5
+          }
         ]
       }
     ],
@@ -49,10 +75,13 @@
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          { "type": "command",
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/impeccable/scripts/hook.mjs\"; exit 0",
             "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\skills\\impeccable\\scripts\\hook.mjs\" }",
-            "timeout": 5, "statusMessage": "Checking UI changes" }
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
+          }
         ]
       }
     ]

@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-scwap vendors four open-source projects. Three are distributed under the MIT License; Impeccable is distributed under the Apache License 2.0. Each license is preserved verbatim in the `licenses/` directory of this repository.
+scwap vendors four open-source projects. ponytail and superpowers are distributed under the MIT License; caveman (since 3.0.0) and Impeccable are distributed under the Apache License 2.0. Each license is preserved verbatim in the `licenses/` directory of this repository.
 
 ---
 
@@ -8,8 +8,10 @@ scwap vendors four open-source projects. Three are distributed under the MIT Lic
 
 - **Project:** caveman
 - **Repository:** github.com/JuliusBrussee/caveman
-- **License:** MIT
-- **Pinned commit:** `25d22f864ad68cc447a4cb93aefde918aa4aec9f`
+- **License:** Apache-2.0 (MIT before 3.0.0)
+- **Version:** v4.0.1
+- **Pinned commit:** `d262ab3882952a59312ff3537cd86d894523c5ab`
+- **Vendored:** `src/hooks/*.js` + statusline scripts, skills caveman/ultracave/megacave/caveman-commit/caveman-review/caveman-help/caveman-compress, matching commands
 - **License file:** `licenses/LICENSE-caveman`
 
 ---
@@ -19,7 +21,9 @@ scwap vendors four open-source projects. Three are distributed under the MIT Lic
 - **Project:** ponytail
 - **Repository:** github.com/DietrichGebert/ponytail
 - **License:** MIT
-- **Pinned commit:** `64adbf9544581e57053a8d84a94e7e4471d40d95`
+- **Version:** v5.3.2
+- **Pinned commit:** `16352ac229eb08a9598dcae48fe9f2b342567d86`
+- **Vendored:** core hooks, skills, commands. The optional task band (`hooks/band/`, `hooks/claude-band.json`) is not bundled.
 - **License file:** `licenses/LICENSE-ponytail`
 
 ---
@@ -29,8 +33,8 @@ scwap vendors four open-source projects. Three are distributed under the MIT Lic
 - **Project:** superpowers
 - **Repository:** github.com/obra/superpowers
 - **License:** MIT
-- **Version:** v6.0.3
-- **Pinned commit:** `896224c4b1879920ab573417e68fd51d2ccc9072`
+- **Version:** v7.0.1
+- **Pinned commit:** `2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`
 - **License file:** `licenses/LICENSE-superpowers`
 
 ---

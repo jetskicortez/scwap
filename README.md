@@ -22,7 +22,7 @@ One plugin, three core operating layers plus Codex model routing and Impeccable 
 |---|---|---|
 | **Superpowers** | obra/superpowers | *Process* — how work is approached (plan, TDD, verify, review) |
 | **Ponytail** | DietrichGebert/ponytail | *Build restraint* — how much gets built (scope gates, debt tracking) |
-| **Caveman** | JuliusBrussee/caveman | *Prose* — how the agent talks (direct, no fluff, no filler) |
+| **Caveman** | JuliusBrussee/caveman | *Prose* — how the agent talks (direct, no fluff, no filler). Three voices: `/caveman`, `/ultracave`, `/megacave` |
 | **Impeccable** | pbakaus/impeccable | *Frontend craft* — design/product references, UI critique, live tooling, and post-edit anti-pattern detection |
 
 The first three layers are independently togglable. Impeccable adds a design skill, bundled runtime scripts, specialist agents, and a post-edit hook for UI files.
@@ -95,9 +95,9 @@ codex plugin marketplace add ./scwap
 
 **Caveman** — controls prose register:
 ```
-/caveman lite
-/caveman full
-/caveman ultra
+/caveman
+/ultracave
+/megacave
 /caveman off
 ```
 

@@ -54,7 +54,7 @@ commit keywords (feat/fix/...), and exact error strings stay verbatim. Preserve 
 language. No self-reference — never announce the mode. Pattern:
 `[thing] [action] [reason]. [next step].` Levels: **lite** (no filler, keep grammar) /
 **full** (classic caveman — default) / **ultra** (abbreviate prose words only, never code
-symbols). Toggle: `/caveman lite|full|ultra|off`. Drop caveman for: security warnings,
+symbols). Toggle: `/caveman`, `/ultracave`, `/megacave`, `/caveman off` (`lite|full|ultra` still work as aliases). Drop caveman for: security warnings,
 irreversible-action confirmations, multi-step sequences where fragment order risks misread,
 or when asked to clarify. Code, commits, PRs, legal, and client-facing output: write normal.
 
