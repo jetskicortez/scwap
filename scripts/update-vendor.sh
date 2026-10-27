@@ -11,7 +11,7 @@
 #   SUPERPOWERS_REF=v7.0.1 PONYTAIL_REF=v5.3.2 CAVEMAN_REF=v4.0.1 \
 #     bash scripts/update-vendor.sh
 #
-# Refs default to each upstream's default-branch HEAD. Impeccable is NOT
+# Refs are tags or branch names (not bare SHAs); they default to each upstream's default-branch HEAD. Impeccable is NOT
 # handled here: since 4.4.0 its skill ships a launcher that downloads a native
 # engine binary; re-vendoring it is a deliberate, reviewed step.
 #
@@ -63,6 +63,7 @@ done
 for s in caveman ultracave megacave caveman-commit caveman-help caveman-review caveman-compress; do copy_skill "$CM/skills" "$s"; done
 for c in caveman ultracave megacave caveman-commit caveman-review; do cp "$CM/commands/$c.toml" "$P/commands/"; done
 cp "$CM/LICENSE" "$P/licenses/LICENSE-caveman"
+cp "$CM/NOTICE" "$P/licenses/NOTICE-caveman"
 CAVEMAN_SHA="$(git -C "$CM" rev-parse HEAD)"
 
 # --- superpowers ------------------------------------------------------------
@@ -91,6 +92,7 @@ cat <<SUMMARY
        cp it to the repo root.
     2. Bump "version" in all four plugin.json files.
     3. node --test tests/structure.test.mjs
-    4. Smoke the hooks (see README "Maintainer Notes"), commit, PR.
+    4. Smoke each hook in hooks/scwap-hooks.json and scwap-codex-hooks.json
+       with an isolated CLAUDE_CONFIG_DIR / PLUGIN_DATA, then commit and PR.
 ============================================================
 SUMMARY

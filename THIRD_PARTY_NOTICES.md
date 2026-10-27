@@ -12,7 +12,7 @@ scwap vendors four open-source projects. ponytail and superpowers are distribute
 - **Version:** v4.0.1
 - **Pinned commit:** `d262ab3882952a59312ff3537cd86d894523c5ab`
 - **Vendored:** `src/hooks/*.js` + statusline scripts, skills caveman/ultracave/megacave/caveman-commit/caveman-review/caveman-help/caveman-compress, matching commands
-- **License file:** `licenses/LICENSE-caveman`
+- **License file:** `licenses/LICENSE-caveman` (Apache-2.0 NOTICE preserved as `licenses/NOTICE-caveman`)
 
 ---
 
