@@ -22,7 +22,7 @@ One plugin, three core operating layers plus Codex model routing and Impeccable 
 |---|---|---|
 | **Superpowers** | obra/superpowers | *Process* — how work is approached (plan, TDD, verify, review) |
 | **Ponytail** | DietrichGebert/ponytail | *Build restraint* — how much gets built (scope gates, debt tracking) |
-| **Caveman** | JuliusBrussee/caveman | *Prose* — how the agent talks (direct, no fluff, no filler) |
+| **Caveman** | JuliusBrussee/caveman | *Prose* — how the agent talks (direct, no fluff, no filler). Three voices: `/caveman`, `/ultracave`, `/megacave` |
 | **Impeccable** | pbakaus/impeccable | *Frontend craft* — design/product references, UI critique, live tooling, and post-edit anti-pattern detection |
 
 The first three layers are independently togglable. Impeccable adds a design skill, bundled runtime scripts, specialist agents, and a post-edit hook for UI files.
@@ -95,13 +95,15 @@ codex plugin marketplace add ./scwap
 
 **Caveman** — controls prose register:
 ```
-/caveman lite
-/caveman full
-/caveman ultra
+/caveman
+/ultracave
+/megacave
 /caveman off
 ```
 
-Superpowers process is always on while scwap is installed. Toggle ponytail and caveman independently based on context. Impeccable is skill-triggered for UI/product/design work and hook-triggered after relevant edits.
+Superpowers process is always on while scwap is installed. Toggle ponytail and caveman independently based on context. Impeccable is skill-triggered for UI/product/design work and hook-triggered after relevant edits, with a deep pass on Stop.
+
+Since Impeccable 4.4 the skill's launcher runs a native engine binary. On first run (the scwap SessionStart hook) it downloads the engine version pinned in `skills/impeccable/scripts/VERSION` from the Impeccable GitHub releases into `~/.impeccable/bin/`, verified against `skills/impeccable/scripts/engine-checksums.txt` and refused on mismatch. Set `IMPECCABLE_BIN` to point at a preinstalled engine instead. Impeccable's roll API records anonymous usage unless you opt out with `DO_NOT_TRACK=1` or `IMPECCABLE_NO_TELEMETRY=1`.
 
 ---
 

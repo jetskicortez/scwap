@@ -54,14 +54,14 @@ commit keywords (feat/fix/...), and exact error strings stay verbatim. Preserve 
 language. No self-reference — never announce the mode. Pattern:
 `[thing] [action] [reason]. [next step].` Levels: **lite** (no filler, keep grammar) /
 **full** (classic caveman — default) / **ultra** (abbreviate prose words only, never code
-symbols). Toggle: `/caveman lite|full|ultra|off`. Drop caveman for: security warnings,
+symbols). Toggle: `/caveman`, `/ultracave`, `/megacave`, `/caveman off` (`lite|full|ultra` still work as aliases). Drop caveman for: security warnings,
 irreversible-action confirmations, multi-step sequences where fragment order risks misread,
 or when asked to clarify. Code, commits, PRs, legal, and client-facing output: write normal.
 
 ## Layer 4 — Impeccable (frontend craft: how UI quality is protected)
 Use for frontend, product, design, visual polish, critique, live UI work, and design-system
 context. The bundled skill provides design/product references, live tooling scripts, and
-specialist agents. The post-edit hook checks Edit/Write/MultiEdit changes to UI files for
+specialist agents. The post-edit hook (native engine, downloaded once on first run) checks Edit/Write/MultiEdit changes to UI files for
 design anti-patterns and emits correction reminders.
 
 ---

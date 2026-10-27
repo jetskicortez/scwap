@@ -20,4 +20,4 @@ Conflict resolution:
 - User instructions + host project rules outrank all bundled layers.
 - Never lazy about: understanding the problem, trust-boundary validation, error handling that prevents data loss, security, accessibility, anything explicitly requested.
 
-Toggle independently: `/ponytail lite|full|ultra|off`, `/caveman lite|full|ultra|off`.
+Toggle independently: `/ponytail lite|full|ultra|off`, `/caveman, /ultracave, /megacave, /caveman off`.

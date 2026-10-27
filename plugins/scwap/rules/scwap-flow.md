@@ -34,4 +34,4 @@ TDD/verification/review (Superpowers).
 - Never lazy about: understanding the problem, trust-boundary validation, error handling
   that prevents data loss, security, accessibility, anything explicitly requested.
 
-Toggle layers independently: `/ponytail lite|full|ultra|off`, `/caveman lite|full|ultra|off`.
+Toggle layers independently: `/ponytail lite|full|ultra|off`, `/caveman, /ultracave, /megacave, /caveman off`.

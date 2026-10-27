@@ -63,9 +63,12 @@ test('nested Codex plugin manifest and runtime payload resolve', () => {
     'plugins/scwap/hooks/session-start-codex',
     'plugins/scwap/skills/ponytail/SKILL.md',
     'plugins/scwap/skills/caveman/SKILL.md',
+    'plugins/scwap/skills/ultracave/SKILL.md',
+    'plugins/scwap/hooks/ponytail-map.js',
     'plugins/scwap/skills/using-superpowers/SKILL.md',
     'plugins/scwap/skills/impeccable/SKILL.md',
-    'plugins/scwap/skills/impeccable/scripts/hook.mjs',
+    'plugins/scwap/skills/impeccable/scripts/impeccable',
+    'plugins/scwap/skills/impeccable/scripts/impeccable.cmd',
     'plugins/scwap/agents/impeccable-manual-edit-applier.md',
     'plugins/scwap/agents/impeccable-asset-producer.md',
     'plugins/scwap/agents/impeccable-documenter.md',
@@ -83,7 +86,7 @@ test('LICENSE present', () => {
 test('ponytail hooks vendored', () => {
   for (const f of ['ponytail-activate.js', 'ponytail-mode-tracker.js',
     'ponytail-subagent.js', 'ponytail-config.js', 'ponytail-runtime.js',
-    'ponytail-instructions.js']) {
+    'ponytail-instructions.js', 'ponytail-map.js']) {
     assert.ok(existsSync(root + 'hooks/' + f), 'missing hooks/' + f);
   }
 });
@@ -102,13 +105,13 @@ test('ponytail license vendored', () => {
 
 test('caveman hooks vendored', () => {
   for (const f of ['caveman-activate.js', 'caveman-config.js',
-    'caveman-mode-tracker.js']) {
+    'caveman-mode-tracker.js', 'caveman-parse.js', 'caveman-stats.js']) {
     assert.ok(existsSync(root + 'hooks/' + f), 'missing hooks/' + f);
   }
 });
 
 test('caveman skills vendored', () => {
-  for (const s of ['caveman', 'caveman-commit', 'caveman-help',
+  for (const s of ['caveman', 'ultracave', 'megacave', 'caveman-commit', 'caveman-help',
     'caveman-review', 'caveman-compress']) {
     assert.ok(existsSync(root + 'skills/' + s + '/SKILL.md'), 'missing ' + s);
   }
@@ -121,7 +124,7 @@ test('caveman license vendored', () => {
 test('superpowers core skills vendored', () => {
   for (const s of ['brainstorming', 'writing-plans', 'test-driven-development',
     'systematic-debugging', 'verification-before-completion',
-    'requesting-code-review', 'using-superpowers']) {
+    'requesting-code-review', 'using-superpowers', 'diagnosing-superpowers']) {
     assert.ok(existsSync(root + 'skills/' + s + '/SKILL.md'), 'missing ' + s);
   }
 });
@@ -145,13 +148,12 @@ test('impeccable runtime vendored', () => {
       'skills/impeccable/reference/new-work.md',
       'skills/impeccable/reference/operate.md',
       'skills/impeccable/reference/routing.md',
-      'skills/impeccable/scripts/hook.mjs',
-      'skills/impeccable/scripts/hook-lib.mjs',
-      'skills/impeccable/scripts/detect.mjs',
-      'skills/impeccable/scripts/doctor.mjs',
-      'skills/impeccable/scripts/live-server.mjs',
-      'skills/impeccable/scripts/detector/detect-antipatterns.mjs',
-      'skills/impeccable/scripts/detector/cli/main.mjs',
+      'skills/impeccable/scripts/impeccable',
+      'skills/impeccable/scripts/impeccable.cmd',
+      'skills/impeccable/scripts/VERSION',
+      'skills/impeccable/scripts/engine-checksums.txt',
+      'skills/impeccable/scripts/command-metadata.json',
+      'licenses/NOTICE-impeccable',
       'agents/impeccable-manual-edit-applier.md',
       'agents/impeccable-asset-producer.md',
       'agents/impeccable-documenter.md',
@@ -193,6 +195,7 @@ test('scwap-hooks.json valid; every referenced script exists', () => {
   assert.ok(h.hooks.SessionStart.length >= 1);
   assert.ok(h.hooks.UserPromptSubmit.length >= 1);
   assert.ok(h.hooks.SubagentStart.length >= 1);
+  assert.match(h.hooks.SubagentStart[0].hooks.map((x) => x.command).join('\n'), /caveman-activate\.js" --subagent/);
   assert.ok(h.hooks.PostToolUse.length >= 1);
 });
 
@@ -262,7 +265,9 @@ test('Codex PostToolUse hook runs impeccable detector from plugin root', () => {
     const detectorEvent = postToolUse.find((x) => /Edit\|Write\|MultiEdit/.test(x.matcher || ''));
     assert.ok(detectorEvent, hookFile + ' missing Impeccable edit matcher');
     const commands = detectorEvent.hooks.map((x) => x.command).join('\n');
-    assert.match(commands, /skills\/impeccable\/scripts\/hook\.mjs/);
+    assert.match(commands, /skills\/impeccable\/scripts\/impeccable" hook/);
+    assert.match(detectorEvent.hooks.map((x) => x.commandWindows).join('\n'), /impeccable\.cmd" hook/);
+    assert.ok(h.hooks.Stop, hookFile + ' missing Stop deep-pass hook');
     assert.doesNotMatch(commands, /\.codex\/hooks\.json/);
   }
 });
